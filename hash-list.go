@@ -7,6 +7,7 @@ type List struct {
 	block_size int
 	hash_list  [][]byte
 	block_len  int
+	size int
 }
 
 func New(hasher hash.Hash, block_size int) *List {
@@ -21,13 +22,14 @@ func (list *List) BlockSize() int {
 }
 
 func (list *List) Size() int {
-	return len(list.hash_list) * list.HashSize()
+	return list.size
 }
 
 func (list *List) Reset() {
 	list.hasher.Reset()
 	list.hash_list = nil
 	list.block_len = 0
+	list.size = 0
 }
 
 func (list *List) Write(data []byte) (int, error) {
@@ -83,5 +85,6 @@ func (list *List) HashSize() int {
 func (list *List) AppendHash(hashes ...[]byte) {
 	for _, hash_value := range hashes {
 		list.hash_list = append(list.hash_list, hash_value)
+		list.size += len(hash_value)
 	}
 }
